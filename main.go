@@ -4,17 +4,56 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"strings"
 )
 
 const (
+	databaseFilename = "db.json"
+
 	modeEngToArm = "eng2arm"
 	modeArmToEng = "arm2eng"
 )
 
 func main() {
-	bs, err := os.ReadFile("db.json")
+	words := loadAndShuffleWords()
+
+	fmt.Println("Word database successfully loaded.")
+	fmt.Println("Enter 1 for English to Armenian.")
+	fmt.Println("Enter 2 for Armenian to English.")
+	fmt.Println("Enter 3 for a random combination of 1 and 2.")
+
+	reader := bufio.NewReader(os.Stdin)
+	gameModeFunc := selectGameMode(reader)
+
+	fmt.Println("Mode selected.")
+
+	for _, word := range words {
+		playGame(word, reader, gameModeFunc)
+	}
+}
+
+func engToArmFunc(w word) (string, string) {
+	return w.English, w.Armenian
+}
+
+func armToEngFunc(w word) (string, string) {
+	return w.Armenian, w.English
+}
+
+func randomModeFunc(w word) (string, string) {
+	n := rand.IntN(2)
+
+	if n == 0 {
+		return w.Armenian, w.English
+	}
+
+	return w.English, w.Armenian
+}
+
+func loadAndShuffleWords() []word {
+	bs, err := os.ReadFile(databaseFilename)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -25,55 +64,47 @@ func main() {
 		panic(err.Error())
 	}
 
-	fmt.Println("Word database successfully loaded.")
-	fmt.Println("Enter 1 for English to Armenian.")
-	fmt.Println("Enter 2 for Armenian to English.")
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
 
-	reader := bufio.NewReader(os.Stdin)
+	return words
+}
 
+func selectGameMode(reader *bufio.Reader) func(w word) (string, string) {
 	fmt.Print("Enter choice: ")
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		panic(err.Error())
 	}
 
-	var mode string
 	switch strings.TrimSpace(input) {
 	case "1":
-		mode = modeEngToArm
+		return engToArmFunc
 	case "2":
-		mode = modeArmToEng
+		return armToEngFunc
+	case "3":
+		return randomModeFunc
 	default:
 		panic("Unknown input: " + input)
 	}
+}
 
-	fmt.Println("Mode selected.")
+func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, string)) {
+	query, answer := gameModeFunc(w)
 
-	// TODO Shuffle words
+	fmt.Println("")
+	fmt.Println(query)
 
-	for _, word := range words {
-		var query, answer string
-
-		if mode == modeEngToArm {
-			query = word.English
-			answer = word.Armenian
-		} else {
-			query = word.Armenian
-			answer = word.English
-		}
-		fmt.Println("")
-		fmt.Println(query)
-
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			panic(err.Error())
-		}
-
-		if strings.TrimSpace(input) == answer {
-			fmt.Println("Correct")
-			continue
-		}
-
-		fmt.Println("Wrong. Correct answer is: " + answer)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		panic(err.Error())
 	}
+
+	if strings.TrimSpace(input) == answer {
+		fmt.Println("Correct!")
+		return
+	}
+
+	fmt.Println("Wrong. Correct answer is: " + answer)
 }
