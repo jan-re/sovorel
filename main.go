@@ -11,9 +11,12 @@ import (
 
 const (
 	databaseFilename = "db.json"
+)
 
-	modeEngToArm = "eng2arm"
-	modeArmToEng = "arm2eng"
+const (
+	modeEngToArm = "1"
+	modeArmToEng = "2"
+	modeCombo    = "3"
 )
 
 func main() {
@@ -67,9 +70,9 @@ func loadAndShuffleWords() []word {
 }
 
 func selectGameMode(reader *bufio.Reader) func(w word) (string, string) {
-	fmt.Println("Enter 1 for English to Armenian.")
-	fmt.Println("Enter 2 for Armenian to English.")
-	fmt.Println("Enter 3 for a random combination of 1 and 2.")
+	fmt.Printf("Enter %q for English to Armenian.\n", modeEngToArm)
+	fmt.Printf("Enter %q for Armenian to English.\n", modeArmToEng)
+	fmt.Printf("Enter %q for a random combination of %q and %q.\n", modeCombo, modeEngToArm, modeArmToEng)
 	fmt.Print("Enter choice: ")
 
 	input, err := reader.ReadString('\n')
