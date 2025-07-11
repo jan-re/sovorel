@@ -18,15 +18,10 @@ const (
 
 func main() {
 	words := loadAndShuffleWords()
-
 	fmt.Println("Word database successfully loaded.")
-	fmt.Println("Enter 1 for English to Armenian.")
-	fmt.Println("Enter 2 for Armenian to English.")
-	fmt.Println("Enter 3 for a random combination of 1 and 2.")
 
 	reader := bufio.NewReader(os.Stdin)
 	gameModeFunc := selectGameMode(reader)
-
 	fmt.Println("Mode selected.")
 
 	for _, word := range words {
@@ -72,7 +67,11 @@ func loadAndShuffleWords() []word {
 }
 
 func selectGameMode(reader *bufio.Reader) func(w word) (string, string) {
+	fmt.Println("Enter 1 for English to Armenian.")
+	fmt.Println("Enter 2 for Armenian to English.")
+	fmt.Println("Enter 3 for a random combination of 1 and 2.")
 	fmt.Print("Enter choice: ")
+
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		panic(err.Error())
