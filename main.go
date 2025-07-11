@@ -22,7 +22,7 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 	gameModeFunc := selectGameMode(reader)
-	fmt.Println("Mode selected.")
+	fmt.Println("Mode selected. The game begins.")
 
 	for _, word := range words {
 		playGame(word, reader, gameModeFunc)
@@ -93,7 +93,7 @@ func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, s
 	query, answer := gameModeFunc(w)
 
 	fmt.Println("")
-	fmt.Println(query)
+	fmt.Println("Translate: " + query)
 
 	input, err := reader.ReadString('\n')
 	if err != nil {
