@@ -27,9 +27,20 @@ func main() {
 	gameModeFunc := selectGameMode(reader)
 	fmt.Println("Mode selected. The game begins.")
 
+	var correct, incorrect int
 	for _, word := range words {
-		playGame(word, reader, gameModeFunc)
+		wasCorrect := playGame(word, reader, gameModeFunc)
+
+		if wasCorrect {
+			correct++
+		} else {
+			incorrect++
+		}
 	}
+
+	fmt.Println("")
+	fmt.Println("That's all the words. Here are your statistics:")
+	fmt.Printf("Total words: %d\nCorrect: %d\nIncorrect: %d\n", correct+incorrect, correct, incorrect)
 }
 
 func engToArmFunc(w word) (string, string) {
@@ -92,7 +103,7 @@ func selectGameMode(reader *bufio.Reader) func(w word) (string, string) {
 	}
 }
 
-func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, string)) {
+func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, string)) (wasCorrect bool) {
 	query, answer := gameModeFunc(w)
 
 	fmt.Println("")
@@ -105,8 +116,9 @@ func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, s
 
 	if strings.TrimSpace(input) == answer {
 		fmt.Println("Correct!")
-		return
+		return true
 	}
 
 	fmt.Println("Wrong. Correct answer is: " + answer)
+	return false
 }
