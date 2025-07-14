@@ -6,5 +6,77 @@
     {
         "eng": "name",
         "arm": "անուն"
+    },
+    {
+        "eng": "mountain",
+        "arm": "սար"
+    },
+    {
+        "eng": "dish",
+        "arm": "աման"
+    },
+    {
+        "eng": "love",
+        "arm": "սեր"
+    },
+    {
+        "eng": "university",
+        "arm": "համալսարան"
+    },
+    {
+        "eng": "to say",
+        "arm": "ասել"
+    },
+    {
+        "eng": "to listen",
+        "arm": "լսել"
+    },
+    {
+        "eng": "candle",
+        "arm": "մոմ"
+    },
+    {
+        "eng": "news",
+        "arm": "թերթ"
+    },
+    {
+        "eng": "ship",
+        "arm": "նավ"
+    },
+    {
+        "eng": "to write",
+        "arm": "գրել"
+    },
+    {
+        "eng": "to eat",
+        "arm": "ուտել"
+    },
+    {
+        "eng": "pencil",
+        "arm": "մատիտ"
+    },
+    {
+        "eng": "paper",
+        "arm": "թերթ"
+    },
+    {
+        "eng": "book",
+        "arm": "գիրք"
+    },
+    {
+        "eng": "wine",
+        "arm": "գինի"
+    },
+    {
+        "eng": "meat",
+        "arm": "միս"
+    },
+    {
+        "eng": "milk",
+        "arm": "կաթ"
+    },
+    {
+        "eng": "to have",
+        "arm": "ունենալ"
     }
 ]
