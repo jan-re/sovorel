@@ -58,6 +58,8 @@ func selectGameMode(reader *bufio.Reader, words []utils.Word) modes.GameMode {
 		return &modes.ArmToEngMode{GameCore: core}
 	case "3":
 		return &modes.ShuffleComboMode{GameCore: core}
+	case "4":
+		panic("TODO PreferLetterMode To be implemented")
 	default:
 		panic("Unknown input: " + input)
 	}
