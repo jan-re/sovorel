@@ -7,16 +7,19 @@ import (
 	"math/rand/v2"
 	"os"
 	"strings"
+
+	"github.com/jan-re/sovorel/modes"
+	"github.com/jan-re/sovorel/utils"
 )
 
 const (
-	databaseFilename = "db.json"
+	databaseFilename = "db1.json"
 )
 
 const (
-	modeEngToArm = "1"
-	modeArmToEng = "2"
-	modeCombo    = "3"
+	choiceModeEngToArm = "1"
+	choiceModeArmToEng = "2"
+	choiceModeCombo    = "3"
 )
 
 func main() {
@@ -24,50 +27,49 @@ func main() {
 	fmt.Println("Word database successfully loaded.")
 
 	reader := bufio.NewReader(os.Stdin)
-	gameModeFunc := selectGameMode(reader)
+	mode := selectGameMode(reader, words)
 	fmt.Println("Mode selected. The game begins.")
 
-	var correct, incorrect int
-	for _, word := range words {
-		wasCorrect := playGame(word, reader, gameModeFunc)
-
-		if wasCorrect {
-			correct++
-		} else {
-			incorrect++
-		}
+	continuePlaying := true
+	for continuePlaying {
+		continuePlaying = mode.PlayRound()
 	}
 
-	fmt.Println("")
-	fmt.Println("That's all the words. Here are your statistics:")
-	fmt.Printf("Total words: %d\nCorrect: %d\nIncorrect: %d\n", correct+incorrect, correct, incorrect)
+	mode.GetScore().Print()
 }
 
-func engToArmFunc(w word) (string, string) {
-	return w.English, w.Armenian
-}
+func selectGameMode(reader *bufio.Reader, words []utils.Word) modes.GameMode {
+	fmt.Printf("Enter %q for English to Armenian.\n", choiceModeEngToArm)
+	fmt.Printf("Enter %q for Armenian to English.\n", choiceModeArmToEng)
+	fmt.Printf("Enter %q for a random combination of %q and %q.\n", choiceModeCombo, choiceModeEngToArm, choiceModeArmToEng)
+	fmt.Print("Enter choice: ")
 
-func armToEngFunc(w word) (string, string) {
-	return w.Armenian, w.English
-}
-
-func randomModeFunc(w word) (string, string) {
-	n := rand.IntN(2)
-
-	if n == 0 {
-		return w.Armenian, w.English
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		panic(err.Error())
 	}
 
-	return w.English, w.Armenian
+	core := modes.GameCore{Reader: reader, Words: words}
+
+	switch strings.TrimSpace(input) {
+	case "1":
+		return &modes.EngToArmMode{GameCore: core}
+	case "2":
+		return &modes.ArmToEngMode{GameCore: core}
+	case "3":
+		return &modes.ShuffleComboMode{GameCore: core}
+	default:
+		panic("Unknown input: " + input)
+	}
 }
 
-func loadAndShuffleWords() []word {
+func loadAndShuffleWords() []utils.Word {
 	bs, err := os.ReadFile(databaseFilename)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	var words []word
+	var words []utils.Word
 	err = json.Unmarshal(bs, &words)
 	if err != nil {
 		panic(err.Error())
@@ -78,47 +80,4 @@ func loadAndShuffleWords() []word {
 	})
 
 	return words
-}
-
-func selectGameMode(reader *bufio.Reader) func(w word) (string, string) {
-	fmt.Printf("Enter %q for English to Armenian.\n", modeEngToArm)
-	fmt.Printf("Enter %q for Armenian to English.\n", modeArmToEng)
-	fmt.Printf("Enter %q for a random combination of %q and %q.\n", modeCombo, modeEngToArm, modeArmToEng)
-	fmt.Print("Enter choice: ")
-
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		panic(err.Error())
-	}
-
-	switch strings.TrimSpace(input) {
-	case "1":
-		return engToArmFunc
-	case "2":
-		return armToEngFunc
-	case "3":
-		return randomModeFunc
-	default:
-		panic("Unknown input: " + input)
-	}
-}
-
-func playGame(w word, reader *bufio.Reader, gameModeFunc func(w word) (string, string)) (wasCorrect bool) {
-	query, answer := gameModeFunc(w)
-
-	fmt.Println("")
-	fmt.Println("Translate: " + query)
-
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		panic(err.Error())
-	}
-
-	if strings.TrimSpace(input) == answer {
-		fmt.Println("Correct!")
-		return true
-	}
-
-	fmt.Println("Wrong. Correct answer is: " + answer)
-	return false
 }

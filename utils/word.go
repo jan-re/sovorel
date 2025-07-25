@@ -1,6 +1,6 @@
-package main
+package utils
 
-type word struct {
+type Word struct {
 	English  string `json:"eng"`
 	Armenian string `json:"arm"`
 }
