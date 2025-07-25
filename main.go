@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	databaseFilename = "db1.json"
+	databaseFilename = "db.json"
 )
 
 const (
