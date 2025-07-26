@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"math/rand/v2"
 	"os"
 	"strings"
@@ -17,9 +19,10 @@ const (
 )
 
 const (
-	choiceModeEngToArm = "1"
-	choiceModeArmToEng = "2"
-	choiceModeCombo    = "3"
+	choiceModeEngToArm       = "1"
+	choiceModeArmToEng       = "2"
+	choiceModeCombo          = "3"
+	choiceModeLetterIncluded = "4"
 )
 
 func main() {
@@ -27,7 +30,11 @@ func main() {
 	fmt.Println("Word database successfully loaded.")
 
 	reader := bufio.NewReader(os.Stdin)
-	mode := selectGameMode(reader, words)
+	mode, err := selectGameMode(reader, words)
+	if err != nil {
+		log.Fatal("Failed to initialize gamemode. Error: " + err.Error())
+	}
+
 	fmt.Println("Mode selected. The game begins.")
 
 	continuePlaying := true
@@ -38,31 +45,49 @@ func main() {
 	mode.GetScore().Print()
 }
 
-func selectGameMode(reader *bufio.Reader, words []utils.Word) modes.GameMode {
-	fmt.Printf("Enter %q for English to Armenian.\n", choiceModeEngToArm)
-	fmt.Printf("Enter %q for Armenian to English.\n", choiceModeArmToEng)
-	fmt.Printf("Enter %q for a random combination of %q and %q.\n", choiceModeCombo, choiceModeEngToArm, choiceModeArmToEng)
-	fmt.Print("Enter choice: ")
+func selectGameMode(reader *bufio.Reader, words []utils.Word) (modes.GameMode, error) {
+	presentChoices()
 
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("failed to read input: %w", err)
 	}
 
 	core := modes.GameCore{Reader: reader, Words: words}
 
 	switch strings.TrimSpace(input) {
 	case "1":
-		return &modes.EngToArmMode{GameCore: core}
+		return &modes.EngToArmMode{GameCore: core}, nil
 	case "2":
-		return &modes.ArmToEngMode{GameCore: core}
+		return &modes.ArmToEngMode{GameCore: core}, nil
 	case "3":
-		return &modes.ShuffleComboMode{GameCore: core}
+		return &modes.ShuffleComboMode{GameCore: core}, nil
 	case "4":
-		panic("TODO PreferLetterMode To be implemented")
+		fmt.Print("Enter letter: ")
+
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return nil, fmt.Errorf("failed to read input: %w", err)
+		}
+
+		trimmedInput := strings.TrimSpace(input)
+
+		if trimmedInput == "" {
+			return nil, errors.New("The letter cannot be empty. Sorry.")
+		}
+
+		return &modes.LetterIncludedMode{GameCore: core, IncludeLetter: trimmedInput}, nil
 	default:
-		panic("Unknown input: " + input)
+		return nil, errors.New("You've entered an unsupported choice. Sorry.")
 	}
+}
+
+func presentChoices() {
+	fmt.Printf("Enter %q for English to Armenian.\n", choiceModeEngToArm)
+	fmt.Printf("Enter %q for Armenian to English.\n", choiceModeArmToEng)
+	fmt.Printf("Enter %q for a random combination of %q and %q.\n", choiceModeCombo, choiceModeEngToArm, choiceModeArmToEng)
+	fmt.Printf("Enter %q for Armenian to English with a specific letter included.\n", choiceModeLetterIncluded)
+	fmt.Print("Enter choice: ")
 }
 
 func loadAndShuffleWords() []utils.Word {
