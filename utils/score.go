@@ -18,6 +18,6 @@ func (s *Score) Increment(wasCorrect bool) {
 
 func (s Score) Print() {
 	fmt.Println("")
-	fmt.Println("That's all the words. Here are your statistics:")
+	fmt.Println("Here are your statistics:")
 	fmt.Printf("Total words: %d\nCorrect: %d\nIncorrect: %d\n", s.correct+s.incorrect, s.correct, s.incorrect)
 }

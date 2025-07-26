@@ -1,7 +1,5 @@
 package modes
 
-import "github.com/jan-re/sovorel/utils"
-
 type ArmToEngMode struct {
 	GameCore
 }
@@ -20,8 +18,4 @@ func (m *ArmToEngMode) PlayRound() bool {
 
 	m.index++
 	return true
-}
-
-func (m *ArmToEngMode) GetScore() utils.Score {
-	return m.score
 }

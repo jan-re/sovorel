@@ -42,7 +42,7 @@ func main() {
 		continuePlaying = mode.PlayRound()
 	}
 
-	mode.GetScore().Print()
+	mode.PrintScore()
 }
 
 func selectGameMode(reader *bufio.Reader, words []utils.Word) (modes.GameMode, error) {

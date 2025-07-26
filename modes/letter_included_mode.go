@@ -41,7 +41,3 @@ func (m *LetterIncludedMode) PlayRound() bool {
 	m.index++
 	return true
 }
-
-func (m *LetterIncludedMode) GetScore() utils.Score {
-	return m.score
-}

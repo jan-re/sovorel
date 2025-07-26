@@ -2,8 +2,6 @@ package modes
 
 import (
 	"math/rand/v2"
-
-	"github.com/jan-re/sovorel/utils"
 )
 
 type ShuffleComboMode struct {
@@ -31,8 +29,4 @@ func (m *ShuffleComboMode) PlayRound() bool {
 
 	m.index++
 	return true
-}
-
-func (m *ShuffleComboMode) GetScore() utils.Score {
-	return m.score
 }

@@ -12,3 +12,7 @@ type GameCore struct {
 	index  int
 	score  utils.Score
 }
+
+func (gc *GameCore) PrintScore() {
+	gc.score.Print()
+}
