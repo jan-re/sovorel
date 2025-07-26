@@ -1,5 +1,7 @@
 package modes
 
+import "fmt"
+
 type EngToArmMode struct {
 	GameCore
 }
@@ -7,7 +9,11 @@ type EngToArmMode struct {
 func (m *EngToArmMode) PlayRound() bool {
 	word := m.Words[m.index]
 
-	wasCorrect := playTranslationGame(m.Reader, word.English, word.Armenian)
+	wasCorrect, err := playTranslationGame(m.Reader, word.English, word.Armenian)
+	if err != nil {
+		fmt.Println(logErrorReadingInput)
+		return false
+	}
 
 	m.score.Increment(wasCorrect)
 

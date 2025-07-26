@@ -26,7 +26,11 @@ const (
 )
 
 func main() {
-	words := loadAndShuffleWords()
+	words, err := loadAndShuffleWords()
+	if err != nil {
+		log.Fatal("Failed to initialize word database. Error: " + err.Error())
+	}
+
 	fmt.Println("Word database successfully loaded.")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -90,21 +94,21 @@ func presentChoices() {
 	fmt.Print("Enter choice: ")
 }
 
-func loadAndShuffleWords() []utils.Word {
+func loadAndShuffleWords() ([]utils.Word, error) {
 	bs, err := os.ReadFile(databaseFilename)
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("failed to read file with words: %w", err)
 	}
 
 	var words []utils.Word
 	err = json.Unmarshal(bs, &words)
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("failed to unmarshal file with words: %w", err)
 	}
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
 
-	return words
+	return words, nil
 }

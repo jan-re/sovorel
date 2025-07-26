@@ -1,6 +1,7 @@
 package modes
 
 import (
+	"fmt"
 	"math/rand/v2"
 )
 
@@ -13,11 +14,17 @@ func (m *ShuffleComboMode) PlayRound() bool {
 
 	n := rand.IntN(2)
 
-	var wasCorrect bool
+	var query, answer string
 	if n == 0 {
-		wasCorrect = playTranslationGame(m.Reader, word.English, word.Armenian)
+		query, answer = word.English, word.Armenian
 	} else {
-		wasCorrect = playTranslationGame(m.Reader, word.Armenian, word.English)
+		query, answer = word.Armenian, word.English
+	}
+
+	wasCorrect, err := playTranslationGame(m.Reader, query, answer)
+	if err != nil {
+		fmt.Println(logErrorReadingInput)
+		return false
 	}
 
 	m.score.Increment(wasCorrect)

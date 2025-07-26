@@ -29,7 +29,11 @@ func (m *LetterIncludedMode) PlayRound() bool {
 
 	word := m.wordsWithLetter[m.index]
 
-	wasCorrect := playTranslationGame(m.Reader, word.Armenian, word.English)
+	wasCorrect, err := playTranslationGame(m.Reader, word.Armenian, word.English)
+	if err != nil {
+		fmt.Println(logErrorReadingInput)
+		return false
+	}
 
 	m.score.Increment(wasCorrect)
 
