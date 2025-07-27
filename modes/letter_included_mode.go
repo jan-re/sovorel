@@ -9,25 +9,29 @@ import (
 
 type LetterIncludedMode struct {
 	GameCore
-	IncludeLetter   string
-	wordsWithLetter []utils.Word
+	IncludeLetter string
+	wordsFiltered bool
 }
 
 func (m *LetterIncludedMode) PlayRound() bool {
-	if m.wordsWithLetter == nil {
+	if !m.wordsFiltered {
+		wordsWithLetter := make([]utils.Word, 0, len(m.Words))
+
 		for _, word := range m.Words {
 			if strings.Contains(word.Armenian, m.IncludeLetter) {
-				m.wordsWithLetter = append(m.wordsWithLetter, word)
+				wordsWithLetter = append(wordsWithLetter, word)
 			}
 		}
 
-		if len(m.wordsWithLetter) == 0 {
+		if len(wordsWithLetter) == 0 {
 			fmt.Println("There are no words in the database with that letter. Sorry!")
 			return false
 		}
+
+		m.Words = wordsWithLetter
 	}
 
-	word := m.wordsWithLetter[m.index]
+	word := m.Words[m.index]
 
 	wasCorrect, err := playTranslationGame(m.Reader, word.Armenian, word.English)
 	if err != nil {
@@ -35,13 +39,5 @@ func (m *LetterIncludedMode) PlayRound() bool {
 		return false
 	}
 
-	m.score.Increment(wasCorrect)
-
-	// Stop the game if we've reached the last word.
-	if m.index == len(m.wordsWithLetter)-1 {
-		return false
-	}
-
-	m.index++
-	return true
+	return m.finalizeRound(wasCorrect)
 }
