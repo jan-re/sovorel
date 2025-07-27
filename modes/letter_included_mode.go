@@ -29,6 +29,7 @@ func (m *LetterIncludedMode) PlayRound() bool {
 		}
 
 		m.Words = wordsWithLetter
+		m.wordsFiltered = true
 	}
 
 	word := m.Words[m.index]
