@@ -34,11 +34,14 @@ func (m *LetterIncludedMode) PlayRound() bool {
 
 	word := m.Words[m.index]
 
-	wasCorrect, err := playTranslationGame(m.Reader, word.Armenian, word.English)
-	if err != nil {
-		fmt.Println(logErrorReadingInput)
-		return false
-	}
+	fmt.Println("")
+	fmt.Println("Read the following word and press enter: " + word.Armenian)
 
-	return m.finalizeRound(wasCorrect)
+	m.Reader.ReadString('\n') // for press enter to continue
+
+	return m.finalizeRound(true)
+}
+
+func (gc *LetterIncludedMode) PrintScore() {
+	fmt.Printf("\nAll done. Total words read: %d\n", gc.score.Correct)
 }

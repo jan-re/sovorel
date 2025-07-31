@@ -90,7 +90,7 @@ func presentChoices() {
 	fmt.Printf("Enter %q for English to Armenian.\n", choiceModeEngToArm)
 	fmt.Printf("Enter %q for Armenian to English.\n", choiceModeArmToEng)
 	fmt.Printf("Enter %q for a random combination of %q and %q.\n", choiceModeCombo, choiceModeEngToArm, choiceModeArmToEng)
-	fmt.Printf("Enter %q for Armenian to English with a specific letter included.\n", choiceModeLetterIncluded)
+	fmt.Printf("Enter %q for a reading exercise of Armenian words with a specific letter included.\n", choiceModeLetterIncluded)
 	fmt.Print("Enter choice: ")
 }
 

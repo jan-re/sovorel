@@ -3,15 +3,15 @@ package utils
 import "fmt"
 
 type Score struct {
-	correct   int
-	incorrect int
+	Correct   int
+	Incorrect int
 }
 
 func (s *Score) Increment(wasCorrect bool) {
 	if wasCorrect {
-		s.correct++
+		s.Correct++
 	} else {
-		s.incorrect++
+		s.Incorrect++
 	}
 
 }
@@ -19,5 +19,5 @@ func (s *Score) Increment(wasCorrect bool) {
 func (s Score) Print() {
 	fmt.Println("")
 	fmt.Println("Here are your statistics:")
-	fmt.Printf("Total words: %d\nCorrect: %d\nIncorrect: %d\n", s.correct+s.incorrect, s.correct, s.incorrect)
+	fmt.Printf("Total words: %d\nCorrect: %d\nIncorrect: %d\n", s.Correct+s.Incorrect, s.Correct, s.Incorrect)
 }
